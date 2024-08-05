@@ -1,4 +1,4 @@
-from graphic import *
+import graphic
 
-app = graphics()
+app = graphic.graphics()
 app.run()
