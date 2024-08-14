@@ -113,13 +113,13 @@ class AgentBrain:
         self.append_event_to_output_file(action.name)
 
         if action == Action.TURN_LEFT:
-            pass
+            self.score -= 10
         elif action == Action.TURN_RIGHT:
-            pass
+            self.score -= 10
         elif action == Action.TURN_UP:
-            pass
+            self.score -= 10
         elif action == Action.TURN_DOWN:
-            pass
+            self.score -= 10
         elif action == Action.MOVE_FORWARD:
             self.score -= 10
         elif action == Action.GRAB_GOLD:
