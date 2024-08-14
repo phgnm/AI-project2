@@ -123,7 +123,7 @@ class AgentBrain:
         elif action == Action.MOVE_FORWARD:
             self.score -= 10
         elif action == Action.GRAB_GOLD:
-            self.score += 100
+            self.score += 5000
         elif action == Action.GRAB_POTION:
             self.score += 50
         elif action == Action.SHOOT:
@@ -415,3 +415,33 @@ class AgentBrain:
             self.add_action(Action.CLIMB_OUT_OF_THE_CAVE)
 
         return self.action_list, self.init_agent_cell, self.init_cell_matrix
+    
+def get_path(self):
+    # Khởi tạo lại tệp đầu ra
+    with open(self.output_filename, 'w'):
+        pass
+
+    # Khởi chạy tìm kiếm bằng phương pháp backtracking
+    self.backtracking_search()
+
+    # Kiểm tra xem tác nhân có chiến thắng hay không
+    victory_flag = True
+    for cell_row in self.cell_matrix:
+        for cell in cell_row:
+            if 'GOLD' in cell['value'] or 'WUMPUS' in cell['value']:
+                victory_flag = False
+                break
+    if victory_flag:
+        self.add_action(Action.KILL_ALL_WUMPUS_AND_GRAB_ALL_FOOD)
+
+    # Nếu tác nhân đã về lại vị trí ban đầu
+    if self.agent_cell.get('parent') == self.cave_cell:
+        self.add_action(Action.CLIMB_OUT_OF_THE_CAVE)
+
+    # Tạo ra danh sách các vị trí mà tác nhân đã đi qua
+    path = [self.init_agent_cell['pos']]
+    for action in self.action_list:
+        if action in [Action.MOVE_FORWARD, Action.TURN_LEFT, Action.TURN_RIGHT, Action.TURN_UP, Action.TURN_DOWN]:
+            path.append(self.agent_cell['pos'])
+
+    return path
