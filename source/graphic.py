@@ -1,5 +1,6 @@
 import sys
 from agent import *
+from map import *
 import Algorithms
 
 # Colours definition
@@ -17,6 +18,19 @@ LEVEL_4_POS = pygame.Rect(235, 360, 500, 50)
 LEVEL_5_POS = pygame.Rect(235, 440, 500, 50)
 EXIT_POS = pygame.Rect(235, 520, 500, 50)
 
+#List of maps
+MAP_LIST = ['../assets/input/map_1.txt',
+            '../assets/input/map_2.txt',
+            '../assets/input/map_3.txt',
+            '../assets/input/map_4.txt',
+            '../assets/input/map_5.txt',]
+
+#List of output files
+OUTPUT_LIST = ['../assets/output/output_1.txt',
+               '../assets/output/output_2.txt',
+               '../assets/output/output_3.txt',
+               '../assets/output/output_4.txt',
+               '../assets/output/output_5.txt',]
 class graphics:
     def __init__(self):
         pygame.init()
@@ -49,6 +63,15 @@ class graphics:
         text_rect.center = rect.center
         self.screen.blit(text_surf, text_rect)
 
+    def game_draw(self):
+        self.screen.fill(WHITE)
+        self.map.draw(self.screen)
+        score = self.agent.get_score()
+        text = self.font.render(f'Your score: {score}', True, BLACK)
+        textRect = text.get_rect()
+        textRect.center = (820, 25)
+        self.screen.blit(text, textRect)
+
     def home_draw(self):
         self.screen.fill(WHITE)
 
@@ -59,19 +82,19 @@ class graphics:
                 sys.exit()
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if 235 <= self.mouse[0] <= 735 and 120 <= self.mouse[1] <= 170:
-                    self.state = 'running'
+                    self.state = 'game'
                     self.map_i = 1
                 elif 235 <= self.mouse[0] <= 735 and 200 <= self.mouse[1] <= 250:
-                    self.state = 'running'
+                    self.state = 'game'
                     self.map_i = 2
                 elif 235 <= self.mouse[0] <= 735 and 280 <= self.mouse[1] <= 330:
-                    self.state = 'running'
+                    self.state = 'game'
                     self.map_i = 3
                 elif 235 <= self.mouse[0] <= 735 and 360 <= self.mouse[1] <= 410:
-                    self.state = 'running'
+                    self.state = 'game'
                     self.map_i = 4
                 elif 235 <= self.mouse[0] <= 735 and 440 <= self.mouse[1] <= 490:
-                    self.state = 'running'
+                    self.state = 'game'
                     self.map_i = 5
                 elif 235 <= self.mouse[0] <= 735 and 520 <= self.mouse[1] <= 570:
                     pygame.quit()
@@ -109,6 +132,19 @@ class graphics:
             if self.state == 'menu':
                 self.home_draw()
                 self.home_event()
-            elif self.state == 'running':
+            elif self.state == 'game':
                 self.state = 'try'
+
+                action_list, cave_cell, cell_matrix = Algorithms.AgentBrain(MAP_LIST[self.map_i - 1], OUTPUT_LIST[self.map_i - 1]).solve_wumpus_world()
+                self.map = Map((len(cell_matrix) - map_pos[i] + 1, map_pos[0]))
+
+                self.agent = agent(len(cell_matrix) - map_pos[i] + 1, map_pos[0])
+                self.agent.load_image()
+                self.all_sprites = pygame.sprite.Group()
+                self.all_sprites.add(self.agent)
+                
+                self.game_draw()
+            else:
+                pygame.quit()
+                sys.exit()
             self.clock.tick(60)
