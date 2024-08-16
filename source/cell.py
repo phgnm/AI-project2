@@ -75,7 +75,7 @@ class Cell:
         return self.percept[4]
     def exist_poison(self):
         return self.percept[5]
-    def exist_hpot(self):
+    def exist_health_pot(self):
         return self.percept[6]
     def exist_whiff(self):
         return self.percept[7]
@@ -88,7 +88,7 @@ class Cell:
     def update_parent(self, parent_cell):
         self.parent = parent_cell
 
-    def grab_hpot(self, cell_matrix, kb):
+    def grab_health_pot(self, cell_matrix, kb):
         # Remove the health potion percept from the current cell
         self.percept[6] = False  # Assuming 'Health Pot' is the 6th percept in the percept list
 
