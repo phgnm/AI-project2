@@ -1,4 +1,5 @@
 import pygame
+from object import *
 
 class agent(pygame.sprite.Sprite):
     def __init__(self, x, y):
@@ -113,4 +114,14 @@ class agent(pygame.sprite.Sprite):
         self.score += 5000
 
     def climb(self):
-        self.score += 10    
+        self.score += 10
+
+    def grab_poison(self):
+        self.health -= 1
+
+    def grab_potion(self):
+        self.count_potion += 1
+
+    def use_potion(self):
+        self.count_potion -= 1
+        self.health += 1    

@@ -7,8 +7,8 @@ class Object(Enum):
     BREEZE = 'B'
     STENCH = 'S'
     AGENT  = 'A'
-    Poison_Gas = 'P_G'
-    Health_Pot = 'H_P'
+    POISON_GAS = 'P_G'
+    HEALTH_POT = 'H_P'
     WHIFF  = 'W_H'
     GLOW   = 'G_L'
     EMPTY  = '-'
@@ -25,7 +25,7 @@ class Cell:
         # [-G, -P, -W, -B, -S, -P_G, -H_P, -W_H, -G_L]
         # [1 ,  2,  3,  4,  5,  6  ,  7,    8  ,  9  ]
         self.percept = [False, False, False, False, False, False, False, False, False]
-        self.init(objects_str)
+        self.init_map(objects_str)
 
         self.parent = None
         self.child_list = []
@@ -43,9 +43,9 @@ class Cell:
                 self.percept[3] = True
             elif obj_char == Object.STENCH.value:
                 self.percept[4] = True
-            elif obj_char == Object.Poison_Gas.value:
+            elif obj_char == Object.POISON_GAS.value:
                 self.percept[5] = True
-            elif obj_char == Object.Health_Pot.value:
+            elif obj_char == Object.HEALTH_POT.value:
                 self.percept[6] = True
             elif obj_char == Object.WHIFF.value:
                 self.percept[7] = True
@@ -88,6 +88,9 @@ class Cell:
     def update_parent(self, parent_cell):
         self.parent = parent_cell
 
+    def grab_gold(self):
+        self.percept[0] = False
+        
     def grab_health_pot(self, cell_matrix, kb):
         # Remove the health potion percept from the current cell
         self.percept[6] = False  # Assuming 'Health Pot' is the 6th percept in the percept list
@@ -197,13 +200,13 @@ class Cell:
             i = 1
         elif obj == Object.WUMPUS:
             i = 2
-        elif obj == obj.BREEZE:
+        elif obj == Object.BREEZE:
             i = 3
-        elif obj == obj.STENCH:
+        elif obj == Object.STENCH:
             i = 4
-        elif obj == Object.Poison_Gas:
+        elif obj == Object.POISON_GAS:
             i = 5
-        elif obj == Object.Health_Pot:
+        elif obj == Object.HEALTH_POT:
             i = 6
         elif obj == Object.WHIFF:
             i = 7

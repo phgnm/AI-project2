@@ -136,9 +136,11 @@ class graphics:
                 self.state = 'try'
 
                 action_list, cave_cell, cell_matrix = Algorithms.AgentBrain(MAP_LIST[self.map_i - 1], OUTPUT_LIST[self.map_i - 1]).solve_wumpus_world()
-                self.map = Map((len(cell_matrix) - map_pos[i] + 1, map_pos[0]))
+                map_pos = cave_cell.map_pos
+                
+                self.map = Map((len(cell_matrix) - map_pos[1] + 1, map_pos[0]))
 
-                self.agent = agent(len(cell_matrix) - map_pos[i] + 1, map_pos[0])
+                self.agent = agent(len(cell_matrix) - map_pos[1] + 1, map_pos[0])
                 self.agent.load_image()
                 self.all_sprites = pygame.sprite.Group()
                 self.all_sprites.add(self.agent)
