@@ -230,6 +230,20 @@ class AgentBrain:
                 clause = [{'literal': adj_cell['pos'], 'type': 'GAS_SOURCE', 'sign': '-'}]
                 self.KB = self.KB.append(clause, ignore_index=True)
 
+        if 'GLOW' in cell['value']:
+            clause = [{'literal': cell['pos'], 'type': 'GLOW', 'sign': '-'}]
+            for adj_cell in adj_cell_list:
+                clause.append({'literal': adj_cell['pos'], 'type': 'HEAL_POTION', 'sign': '+'})
+            self.KB = self.KB.append(clause, ignore_index=True)
+
+            for adj_cell in adj_cell_list:
+                clause = [{'literal': cell['pos'], 'type': 'GLOW', 'sign': '+'}, {'literal': adj_cell['pos'], 'type': 'HEAL_POTION', 'sign': '-'}]
+                self.KB = self.KB.append(clause, ignore_index=True)
+        else:
+            for adj_cell in adj_cell_list:
+                clause = [{'literal': adj_cell['pos'], 'type': 'HEAL_POTION', 'sign': '-'}]
+                self.KB = self.KB.append(clause, ignore_index=True)
+
         print(self.KB)
         self.append_event_to_output_file(str(self.KB))
 
