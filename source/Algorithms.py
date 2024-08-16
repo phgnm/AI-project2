@@ -51,7 +51,7 @@ class AgentBrain:
         self.cave_cell = {'pos': (-1, -1), 'value': 'EMPTY'}
         self.agent_cell = None
         self.init_agent_cell = None
-        self.KB = pd.DataFrame()
+        self.KB = knowledge.knowledgeBase()
         self.path = []
         self.action_list = []
         self.score = 0
@@ -63,7 +63,7 @@ class AgentBrain:
             self.map_size = int(file.readline())
             raw_map = [line.split('.') for line in file.read().splitlines()]
 
-        self.cell_matrix = np.empty((self.map_size, self.map_size), dtype=object)
+        self.cell_matrix = cell.Cell((self.map_size, self.map_size), dtype=object)
         for ir in range(self.map_size):
             for ic in range(self.map_size):
                 self.cell_matrix[ir][ic] = {'pos': (ir, ic), 'value': raw_map[ir][ic]}
@@ -135,6 +135,8 @@ class AgentBrain:
             self.score -= 10000
         elif action == Action.CLIMB_OUT_OF_THE_CAVE:
             self.score += 10
+            print('Score: ' + str(self.score))
+            self.append_event_to_output_file('Score: ' + str(self.score))
         elif action == Action.HEAL:
             if self.count_potion > 0 & self.health < self.MAX_HP :
                 self.potion -= 1
@@ -145,9 +147,29 @@ class AgentBrain:
             elif self.health == self.MAX_HP :
                 print('Logic Error: Bạn đang có 100% HP.')
         # Các hành động khác
-        print('Score: ' + str(self.score))
-        self.append_event_to_output_file('Score: ' + str(self.score))
-
+        elif action == Action.DECTECT_PIT:
+            pass
+        elif action == Action.DETECT_WUMPUS:
+            pass
+        elif action == Action.DETECT_NO_PIT:
+            pass
+        elif action == Action.DETECT_NO_WUMPUS:
+            pass
+        elif action == Action.INFER_PIT:
+            pass
+        elif action == Action.INFER_NOT_PIT:
+            pass
+        elif action == Action.INFER_WUMPUS:
+            pass
+        elif action == Action.INFER_NOT_WUMPUS:
+            pass
+        elif action == Action.DETECT_SAFE:
+            pass
+        elif action == Action.INFER_SAFE:
+            pass
+        else:
+            raise TypeError("Error: " + self.add_action.__name__)
+        
     def add_new_percepts_to_KB(self, cell):
         adj_cell_list = self.get_adj_cell_list(cell)
 
@@ -246,6 +268,25 @@ class AgentBrain:
 
         print(self.KB)
         self.append_event_to_output_file(str(self.KB))
+    def turn_to(self, next_cell):
+        if next_cell.map_pos[0] == self.agent_cell.map_pos[0]:
+            if next_cell.map_pos[1] - self.agent_cell.map_pos[1] == 1:
+                self.add_action(Action.TURN_UP)
+            else:
+                self.add_action(Action.TURN_DOWN)
+        elif next_cell.map_pos[1] == self.agent_cell.map_pos[1]:
+            if next_cell.map_pos[0] - self.agent_cell.map_pos[0] == 1:
+                self.add_action(Action.TURN_RIGHT)
+            else:
+                self.add_action(Action.TURN_LEFT)
+        else:
+            raise TypeError('Error: ' + self.turn_to.__name__)
+
+
+    def move_to(self, next_cell):
+        self.turn_to(next_cell)
+        self.add_action(Action.MOVE_FORWARD)
+        self.agent_cell = next_cell
 
     def backtracking_search(self):
         if 'PIT' in self.agent_cell['value']:
