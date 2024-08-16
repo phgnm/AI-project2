@@ -125,7 +125,7 @@ class AgentBrain:
         elif action == Action.GRAB_GOLD:
             self.score += 5000
         elif action == Action.GRAB_POTION:
-            self.score += 50
+            pass
         elif action == Action.SHOOT:
             self.score -= 100
         elif action == Action.BE_EATEN_BY_WUMPUS:
