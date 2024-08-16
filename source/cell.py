@@ -107,7 +107,7 @@ class Cell:
                     break
 
             if del_glow_flag:
-                glow_cell.percept[7] = False  # Assuming 'Glow' is the 8th percept in the percept list
+                glow_cell.percept[8] = False  # Assuming 'Glow' is the 8th percept in the percept list
                 literal = glow_cell.get_literal(Object.GLOW, '+')
                 kb.del_clause([literal])
 
