@@ -35,7 +35,7 @@ class graphics:
         self.victory = pygame.font.Font('../assets/fonts/CenturyGothic.ttf', 50)
         self.all_sprites = pygame.sprite.Group()
 
-        self.state = 'map'
+        self.state = 'menu'
         self.map_i = 1
         self.mouse = None
         self.background = pygame.image.load('../assets/images/you_win.png').convert()
@@ -106,6 +106,9 @@ class graphics:
     
     def run(self):
         while 1:
-            self.home_draw()
-            self.home_event()
+            if self.state == 'menu':
+                self.home_draw()
+                self.home_event()
+            elif self.state == 'running':
+                self.state = 'try'
             self.clock.tick(60)
