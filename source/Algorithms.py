@@ -37,6 +37,7 @@ class Action(Enum):
     INFER_NOT_GAS = 30
     PERCEIVE_POTION = 31
     GRAB_POTION = 32
+    HEAL = 33
 
 
 class AgentBrain:
@@ -125,7 +126,7 @@ class AgentBrain:
         elif action == Action.GRAB_GOLD:
             self.score += 5000
         elif action == Action.GRAB_POTION:
-            pass
+            self.count_potion += 1 
         elif action == Action.SHOOT:
             self.score -= 100
         elif action == Action.BE_EATEN_BY_WUMPUS:
@@ -134,6 +135,15 @@ class AgentBrain:
             self.score -= 10000
         elif action == Action.CLIMB_OUT_OF_THE_CAVE:
             self.score += 10
+        elif action == Action.HEAL:
+            if self.count_potion > 0 & self.health < self.MAX_HP :
+                self.potion -= 1
+                self.health += 1
+                self.score -= 10
+            elif self.count_potion == 0 :
+                print('Logic Error: Bạn không có bình potion nào.')
+            elif self.health == self.MAX_HP :
+                print('Logic Error: Bạn đang có 100% HP.')
         # Các hành động khác
         print('Score: ' + str(self.score))
         self.append_event_to_output_file('Score: ' + str(self.score))

@@ -13,6 +13,9 @@ class agent(pygame.sprite.Sprite):
         self.spacing = 70
         self.i = x - 1
         self.j = y - 1
+        self.MAX_HP = 4
+        self.count_potion = 0
+        self.health = 4
     
     def load_image(self):
         self.img_list.append(self.image)
