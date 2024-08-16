@@ -66,7 +66,7 @@ class AgentBrain:
         for ir in range(self.map_size):
             for ic in range(self.map_size):
                 self.cell_matrix[ir][ic] = {'pos': (ir, ic), 'value': raw_map[ir][ic]}
-                if 'AGENT' in raw_map[ir][ic]:
+                if 'A' in raw_map[ir][ic]:
                     self.agent_cell = self.cell_matrix[ir][ic]
                     self.agent_cell['parent'] = self.cave_cell
                     self.init_agent_cell = copy.deepcopy(self.agent_cell)
@@ -144,8 +144,8 @@ class AgentBrain:
         sign = '-'
         if 'PIT' in cell['value']:
             sign = '+'
-            self.KB = self.KB.append({'literal': cell['pos'], 'type': 'WUMPUS', 'sign': '-'}, ignore_index=True)
-        self.KB = self.KB.append({'literal': cell['pos'], 'type': 'PIT', 'sign': sign}, ignore_index=True)
+            self.KB = self.KB._append({'literal': cell['pos'], 'type': 'WUMPUS', 'sign': '-'}, ignore_index=True)
+        self.KB = self.KB._append({'literal': cell['pos'], 'type': 'PIT', 'sign': sign}, ignore_index=True)
         sign_pit = sign
 
         sign = '-'
