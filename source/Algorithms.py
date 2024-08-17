@@ -6,9 +6,9 @@ import knowledge
 
 class Action(Enum):
     TURN_LEFT = 1
-    TURN_RIGHT = 2
-    TURN_UP = 3
-    TURN_DOWN = 4
+    TURN_DOWN = 2
+    TURN_RIGHT = 3
+    TURN_UP = 4
     MOVE_FORWARD = 5
     GRAB_GOLD = 6
     PERCEIVE_BREEZE = 7
@@ -56,6 +56,9 @@ class AgentBrain:
         self.path = []
         self.action_list = []
         self.score = 0
+        self.health = 4
+        self.max_health = 4
+        self.count_potion = 0
 
         self.read_map(map_filename)
 
@@ -116,8 +119,12 @@ class AgentBrain:
             self.score -= 10
         elif action == Action.MOVE_FORWARD:
             self.score -= 10
+            print('Score: ' + str(self.score))
+            self.append_event_to_output_file('Score: ' + str(self.score))
         elif action == Action.GRAB_GOLD:
             self.score += 5000
+            print('Score: ' + str(self.score))
+            self.append_event_to_output_file('Score: ' + str(self.score))
         elif action == Action.GRAB_POTION:
             self.count_potion += 1 
         elif action == Action.SHOOT:
@@ -126,6 +133,12 @@ class AgentBrain:
             self.score -= 10000
         elif action == Action.FALL_INTO_PIT:
             self.score -= 10000
+        elif action == Action.SNIFF_GAS:
+            self.health -= 1
+        elif action == Action.HEAL:
+            if self.count_potion:
+                self.count_potion -= 1
+                self.health = min(self.health + 1, self.max_health)
         elif action == Action.CLIMB_OUT_OF_THE_CAVE:
             self.score += 10
             print('Score: ' + str(self.score))
@@ -140,13 +153,19 @@ class AgentBrain:
             elif self.health == self.MAX_HP :
                 print('Logic Error: Bạn đang có 100% HP.')
         # Các hành động khác
-        elif action == Action.DETECT_PIT:
+        elif action == Action.KILL_ALL_WUMPUS_AND_GRAB_ALL_FOOD:
             pass
-        elif action == Action.DETECT_WUMPUS:
+        elif action == Action.DETECT_PIT:
             pass
         elif action == Action.DETECT_NO_PIT:
             pass
+        elif action == Action.DETECT_WUMPUS:
+            pass
         elif action == Action.DETECT_NO_WUMPUS:
+            pass
+        elif action == Action.DETECT_SAFE:
+            pass
+        elif action == Action.DETECT_GAS:
             pass
         elif action == Action.INFER_PIT:
             pass
@@ -156,11 +175,7 @@ class AgentBrain:
             pass
         elif action == Action.INFER_NOT_WUMPUS:
             pass
-        elif action == Action.DETECT_SAFE:
-            pass
         elif action == Action.INFER_SAFE:
-            pass
-        elif action == Action.DETECT_GAS:
             pass
         elif action == Action.INFER_GAS:
             pass
@@ -169,6 +184,10 @@ class AgentBrain:
         elif action == Action.PERCEIVE_BREEZE:
             pass
         elif action == Action.PERCEIVE_STENCH:
+            pass
+        elif action == Action.PERCEIVE_WHIFF:
+            pass
+        elif action == Action.PERCEIVE_GLOW:
             pass
         elif action == Action.KILL_WUMPUS:
             pass
@@ -201,6 +220,11 @@ class AgentBrain:
         if cell.exist_poison():
             sign = '+'
         self.KB.add_clause([cell.get_literal(cells.Object.POISON_GAS, sign)])
+
+        sign = '-'
+        if cell.exist_glow():
+            sign = '+'
+        self.KB.add_clause([cell.get_literal(cells.Object.GLOW, sign)])
 
         sign = '-'
         if cell.exist_health_pot():
@@ -270,6 +294,24 @@ class AgentBrain:
             for adj_cell in adj_cell_list:
                 clause = [adj_cell.get_literal(cells.Object.POISON_GAS, '-')]
                 self.KB.add_clause(clause)
+        
+        if cell.exist_glow():
+            # S => Wa v Wb v Wc v Wd
+            clause = [cell.get_literal(cells.Object.GLOW, '-')]
+            for adj_cell in adj_cell_list:
+                clause.append(adj_cell.get_literal(cells.Object.HEALTH_POT, '+'))
+            self.KB.add_clause(clause)
+
+            # Wa v Wb v Wc v Wd => S
+            for adj_cell in adj_cell_list:
+                clause = [cell.get_literal(cells.Object.GLOW, '+'),
+                          adj_cell.get_literal(cells.Object.HEALTH_POT, '-')]
+                self.KB.add_clause(clause)
+
+        else:
+            for adj_cell in adj_cell_list:
+                clause = [adj_cell.get_literal(cells.Object.HEALTH_POT, '-')]
+                self.KB.add_clause(clause)
 
         print(self.KB.KB)
         self.append_event_to_output_file(str(self.KB.KB))
@@ -302,6 +344,11 @@ class AgentBrain:
             self.add_action(Action.BE_EATEN_BY_WUMPUS)
             return False
 
+        if self.agent_cell.exist_poison():
+            self.add_action(Action.SNIFF_GAS)
+            if self.health == 0:
+                return False
+
         if self.agent_cell.exist_gold():
             self.add_action(Action.GRAB_GOLD)
             self.agent_cell.grab_gold()
@@ -312,9 +359,6 @@ class AgentBrain:
         if self.agent_cell.exist_stench():
             self.add_action(Action.PERCEIVE_STENCH)
 
-        if self.agent_cell.exist_poison():
-            self.add_action(Action.SNIFF_GAS)
-
         if self.agent_cell.exist_whiff():
             self.add_action(Action.PERCEIVE_WHIFF)
 
@@ -323,7 +367,7 @@ class AgentBrain:
 
         if self.agent_cell.exist_health_pot():
             self.add_action(Action.GRAB_POTION)
-            self.agent_cell.grab_potion()
+            self.agent_cell.grab_health_pot()
 
         if not self.agent_cell.is_explored():
             self.agent_cell.explore()
@@ -337,7 +381,7 @@ class AgentBrain:
 
         pre_agent_cell = self.agent_cell
 
-        if not self.agent_cell.is_OK():
+        if not self.agent_cell.is_OK(self.health):
             temp_adj_cell_list = []
             for valid_adj_cell in valid_adj_cell_list:
                 if valid_adj_cell.is_explored() and valid_adj_cell.exist_pit():

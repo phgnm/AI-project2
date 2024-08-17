@@ -73,16 +73,21 @@ class Cell:
 
     def exist_stench(self):
         return self.percept[4]
+    
     def exist_poison(self):
         return self.percept[5]
+    
     def exist_health_pot(self):
         return self.percept[6]
+    
     def exist_whiff(self):
         return self.percept[7]
+    
     def exist_glow(self):
         return self.percept[8]
-    def is_OK(self):
-        return not self.exist_breeze() and not self.exist_stench() and not self.exist_whiff()
+    
+    def is_OK(self, health):
+        return not self.exist_breeze() and not self.exist_stench() and not (self.exist_whiff() and health == 1)
 
 
     def update_parent(self, parent_cell):
