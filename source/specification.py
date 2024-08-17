@@ -18,6 +18,8 @@ IMG_WUMPUS = '../assets/images/wumpus.png'
 IMG_GOLD = '../assets/images/gold.png'
 IMG_STENCH = '../assets/images/stench.png'
 IMG_BREEZE = '../assets/images/breeze.png'
+IMG_POTION = '../assets/images/potion.png'
+IMG_GAS = '../assets/images/gas.png'
 
 # Hunter
 IMG_HUNTER_RIGHT = '../assets/images/hunter_right.png'
