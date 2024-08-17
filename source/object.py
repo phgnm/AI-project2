@@ -193,7 +193,13 @@ class Arrow:
 
     def shoot(self, direct, screen, y, x):
         if direct == 0:
-            self.shoot_up()
+            self.shoot_left(screen, x, y)
+        elif direct == 1:
+            self.shoot_down(screen, x, y)
+        elif direct == 2:
+            self.shoot_right(screen, x, y)
+        elif direct == 3:
+            self.shoot.up(screen, x, y)
 
     def shoot_left(self, screen, x, y):
         x = 10 + (x - 1) * 70

@@ -208,9 +208,14 @@ class graphics:
                 self.game_draw()
 
                 for action in action_list:
-                    pygame.display.flip()
-                    self.clock.tick(30)
+                    for event in pygame.event.get():
+                        if event.type == pygame.QUIT:
+                            pygame.quit()
+                            sys.exit()
                     self.display_action(action)
+                    pygame.display.flip()
+
+                    self.clock.tick(30)
 
                     if action == Algorithms.Action.KILL_ALL_WUMPUS_AND_GRAB_ALL_FOOD:
                         self.state = 'win'
