@@ -110,7 +110,7 @@ class agent(pygame.sprite.Sprite):
     def shoot(self):
         self.score -= 100
 
-    def wumpus_or_pit(self):
+    def wumpus_or_pit_or_poison(self):
         self.score -= 10000 
     
     def grab_gold(self):

@@ -124,6 +124,17 @@ class Gas:
         for i in range(len(x)):
             self.gas_pos[x[i]][y[i]] = True
     
+    def grab_poison(self, screen, font):
+        text = font.render('You sniffed poisonous gas!', True, (0, 0, 0))
+        textRect = text.get_rect()
+        textRect.center = self.pos
+        screen.blit(text, textRect)
+        screen.blit(self.image, (750, 200))
+        text = font.render('Health - 25', True, (0, 0, 0))
+        textRect.center = (900, 600)
+        screen.blit(text, textRect)
+        pygame.display.update()
+
     def gas_discovered(self):
         self.is_discovered = True
 
@@ -162,6 +173,13 @@ class Potion:
         textRect.center = self.pos
         screen.blit(text, textRect)
         screen.blit(self.image, (750, 200))
+        pygame.display.update()
+    
+    def use_potion(self, screen, font):
+        text = font.render('Potion used', True, (0, 0, 0))
+        textRect = text.get_rect()
+        textRect.center = self.pos
+        screen.blit(text, textRect)
         pygame.display.update()
 
 class Arrow:
