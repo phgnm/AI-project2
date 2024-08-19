@@ -58,6 +58,8 @@ class graphics:
         self.background = pygame.transform.scale(self.background, (1234, 710))
         self.background_game = pygame.image.load('../assets/images/background_game.png').convert()
         self.background_game = pygame.transform.scale(self.background_game, (710, 710))
+        self.background_menu = pygame.image.load('../assets/images/background_menu.jpg').convert()
+        self.background_menu = pygame.transform.scale(self.background_menu, (1234, 710))
         self.direction = 0
 
     def draw_button(self, surf, rect, button_colour, text_colour, text):
@@ -119,6 +121,7 @@ class graphics:
 
     def home_draw(self):
         self.screen.fill(WHITE)
+        self.screen.blit(self.background_menu, (0, 0))
 
     def home_event(self):
         for event in pygame.event.get():
