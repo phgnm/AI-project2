@@ -317,6 +317,7 @@ class AgentBrain:
 
         print(self.KB.KB)
         self.append_event_to_output_file(str(self.KB.KB))
+        
     def turn_to(self, next_cell):
         if next_cell.map_pos[0] == self.agent_cell.map_pos[0]:
             if next_cell.map_pos[1] - self.agent_cell.map_pos[1] == 1:

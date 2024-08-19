@@ -8,7 +8,7 @@ class agent(pygame.sprite.Sprite):
         self.MAX_HP = 4
         self.count_potion = 0
         self.health = 4
-        self.image = pygame.image.load('../assets/images/agent_up.png').convert()
+        self.image = pygame.image.load('../assets/images/agent_right.png').convert()
         self.img_list = []
         self.y = 40 + (x - 1) * 70
         self.x = 40 + (y - 1) * 70
@@ -37,13 +37,13 @@ class agent(pygame.sprite.Sprite):
     
     def move(self, direct):
         if direct == 0:
-            self.move_left()
+            self.move_up()     
         elif direct == 1:
             self.move_down()
         elif direct == 2:
-            self.move_right()
+            self.move_left()
         elif direct == 3:
-            self.move_up()
+            self.move_right()
     
     def move_up(self):
         self.y -= self.spacing
