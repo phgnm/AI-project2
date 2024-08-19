@@ -37,13 +37,13 @@ class agent(pygame.sprite.Sprite):
     
     def move(self, direct):
         if direct == 0:
-            self.move_up()     
+            self.move_left()     
         elif direct == 1:
             self.move_down()
         elif direct == 2:
-            self.move_left()
-        elif direct == 3:
             self.move_right()
+        elif direct == 3:
+            self.move_up()
     
     def move_up(self):
         self.y -= self.spacing
@@ -69,20 +69,25 @@ class agent(pygame.sprite.Sprite):
         if self.j < 9:
             self.j += 1
 
-    def turn_up(self):
-        self.image = self.img_list[0]
-        return 0
-    
     def turn_left(self):
+        self.score -= 10
         self.image = self.img_list[1]
+        return 0
+
+    def turn_down(self):
+        self.score -= 10
+        self.image = self.img_list[2]
         return 1
     
-    def turn_down(self):
-        self.image = self.img_list[2]
-        return 2
     
     def turn_right(self):
+        self.score -= 10
         self.image = self.img_list[3]
+        return 2
+    
+    def turn_up(self):
+        self.score -= 10
+        self.image = self.img_list[0]
         return 3
     
     def update(self):

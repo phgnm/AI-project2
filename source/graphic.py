@@ -76,7 +76,7 @@ class graphics:
 
     def win_draw(self):
         self.screen.fill(WHITE)
-        self.screen.blit(self.bg, (0, 0))
+        self.screen.blit(self.background, (0, 0))
 
         if self.state == 'win':
             text = self.victory.render('CONGRATULATIONS', True, BLACK)
@@ -98,7 +98,7 @@ class graphics:
                 sys.exit()
         pygame.display.update()
         pygame.time.delay(200)
-        self.state = 'map'
+        self.state = 'menu'
 
     def home_draw(self):
         self.screen.fill(WHITE)
@@ -215,7 +215,7 @@ class graphics:
                     self.display_action(action)
                     pygame.display.flip()
 
-                    self.clock.tick(60)
+                    self.clock.tick(30)
 
                     if action == Algorithms.Action.KILL_ALL_WUMPUS_AND_GRAB_ALL_FOOD:
                         self.state = 'win'
@@ -405,6 +405,7 @@ class graphics:
                 j += 1
             elif self.direction == 3:
                 i -= 1
+            print(i, j)
             self.map.pit_detect(i, j)
             self.all_sprites.update()
             self.game_draw()

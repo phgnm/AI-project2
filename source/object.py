@@ -9,6 +9,7 @@ class Pit:
         self.noti = [[False for i in range(self.size)] for j in range(self.size)]
         self.pit_pos = [[False for i in range(self.size)] for j in range(self.size)]
         for i in range(len(x)):
+            print(x[i], y[i])
             self.pit_pos[x[i]][y[i]] = True
 
     def pit_discovered(self):
@@ -31,6 +32,7 @@ class Pit:
             for i in range(self.size):
                 for j in range(self.size):
                     if self.noti[i][j] and is_discovered[i][j]:
+                        
                         text = font.render('Breeze', True, (0, 0, 0))
                         textRect = text.get_rect()
                         textRect.center = (42 + j * 70, 40 + i * 70)
@@ -199,7 +201,7 @@ class Arrow:
         elif direct == 2:
             self.shoot_right(screen, x, y)
         elif direct == 3:
-            self.shoot.up(screen, x, y)
+            self.shoot_up(screen, x, y)
 
     def shoot_left(self, screen, x, y):
         x = 10 + (x - 1) * 70

@@ -127,13 +127,13 @@ class Cell:
                 # ¬G => Ha v Hb v Hc v Hd
                 clause = [glow_cell.get_literal(Object.GLOW, '-')]
                 for adj_cell in adj_cell_list:
-                    clause.append(adj_cell.get_literal(Object.Health_Pot, '+'))
+                    clause.append(adj_cell.get_literal(Object.HEALTH_POT, '+'))
                 kb.del_clause(clause)
 
                 # Ha v Hb v Hc v Hd => G
                 for adj_cell in adj_cell_list:
                     clause = [glow_cell.get_literal(Object.GLOW, '+'),
-                              adj_cell.get_literal(Object.Health_Pot, '-')]
+                              adj_cell.get_literal(Object.HEALTH_POT, '-')]
                     kb.del_clause(clause)
 
     def kill_wumpus(self, cell_matrix, kb):
@@ -179,9 +179,9 @@ class Cell:
                                     (self.matrix_pos[0] - 1, self.matrix_pos[1]),   # Up
                                     (self.matrix_pos[0] + 1, self.matrix_pos[1])]   # Down
 
-        for ajd_cell_matrix_pos in adj_cell_matrix_pos_list:
-            if 0 <= ajd_cell_matrix_pos[0] < self.map_size and 0 <= ajd_cell_matrix_pos[1] < self.map_size:
-                adj_cell_list.append(cell_matrix[ajd_cell_matrix_pos[0]][ajd_cell_matrix_pos[1]])
+        for adj_cell_matrix_pos in adj_cell_matrix_pos_list:
+            if 0 <= adj_cell_matrix_pos[0] < self.map_size and 0 <= adj_cell_matrix_pos[1] < self.map_size:
+                adj_cell_list.append(cell_matrix[adj_cell_matrix_pos[0]][adj_cell_matrix_pos[1]])
 
         return adj_cell_list
 
