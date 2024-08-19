@@ -63,16 +63,55 @@ class AgentBrain:
 
         self.read_map(map_filename)
 
+    def preprocess_map(self, raw_map):
+        rows = len(raw_map)
+        cols = len(raw_map[0])
+
+        def mark_adjacent(raw_map, row, col, mark):
+            directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+            for dr, dc in directions:
+                r, c = row + dr, col + dc
+                if 0 <= r < rows and 0 <= c < cols:
+                    if raw_map[r][c] == '-':
+                        raw_map[r][c] = mark
+                    elif mark not in raw_map[r][c]:
+                        raw_map[r][c] += ',' + mark
+        wumpus_list = []
+        pit_list = []
+        potion_list = []
+        poison_list = []
+        for r in range(rows):
+            for c in range(cols):
+                if 'W' in raw_map[r][c]:
+                    wumpus_list.append((r, c))
+                if 'P' in raw_map[r][c] and 'P_G' not in raw_map[r][c]:
+                    pit_list.append((r, c))
+                if 'H_P' in raw_map[r][c]:
+                    potion_list.append((r, c))
+                if 'P_G' in raw_map[r][c]:
+                    poison_list.append((r, c))
+        for (r, c) in wumpus_list:
+            mark_adjacent(raw_map, r, c, 'S')
+        for (r, c) in pit_list:
+            mark_adjacent(raw_map, r, c, 'B')
+        for (r, c) in potion_list:
+            mark_adjacent(raw_map, r, c, 'G_L')
+        for (r, c) in poison_list:
+            mark_adjacent(raw_map, r, c, 'W_H')
+        return raw_map
+
     def read_map(self, map_filename):
         with open(map_filename, 'r') as file:
             self.map_size = int(file.readline())
             raw_map = [line.split('.') for line in file.read().splitlines()]
-        print(raw_map)
+        processed_map = self.preprocess_map(raw_map)
+        print(processed_map)
+
         self.cell_matrix = [[None for _ in range(self.map_size)] for _ in range(self.map_size)]
         for ir in range(self.map_size):
             for ic in range(self.map_size):
-                self.cell_matrix[ir][ic] = cells.Cell((ir, ic), self.map_size, raw_map[ir][ic])
-                if cells.Object.AGENT.value in raw_map[ir][ic]:
+                self.cell_matrix[ir][ic] = cells.Cell((ir, ic), self.map_size, processed_map[ir][ic])
+                if cells.Object.AGENT.value in processed_map[ir][ic]:
                     self.agent_cell = self.cell_matrix[ir][ic]
                     self.agent_cell.update_parent(self.cave_cell)
                     self.init_agent_cell = copy.deepcopy(self.agent_cell)
@@ -107,7 +146,7 @@ class AgentBrain:
 
     def add_action(self, action):
         self.action_list.append(action)
-        print(action)
+        # print(action)
         self.append_event_to_output_file(action.name)
 
         if action == Action.TURN_LEFT:
@@ -120,11 +159,11 @@ class AgentBrain:
             self.score -= 10
         elif action == Action.MOVE_FORWARD:
             self.score -= 10
-            print('Score: ' + str(self.score))
+            # print('Score: ' + str(self.score))
             self.append_event_to_output_file('Score: ' + str(self.score))
         elif action == Action.GRAB_GOLD:
             self.score += 5000
-            print('Score: ' + str(self.score))
+            # print('Score: ' + str(self.score))
             self.append_event_to_output_file('Score: ' + str(self.score))
         elif action == Action.GRAB_POTION:
             self.count_potion += 1 
@@ -146,7 +185,7 @@ class AgentBrain:
                 self.health = min(self.health + 1, self.max_health)
         elif action == Action.CLIMB_OUT_OF_THE_CAVE:
             self.score += 10
-            print('Score: ' + str(self.score))
+            # print('Score: ' + str(self.score))
             self.append_event_to_output_file('Score: ' + str(self.score))
         elif action == Action.HEAL:
             if self.count_potion > 0 & self.health < self.MAX_HP :
@@ -169,6 +208,8 @@ class AgentBrain:
         elif action == Action.DETECT_SAFE:
             pass
         elif action == Action.DETECT_GAS:
+            pass
+        elif action == Action.DETECT_NO_GAS:
             pass
         elif action == Action.INFER_PIT:
             pass
@@ -197,6 +238,7 @@ class AgentBrain:
         elif action == Action.KILL_NO_WUMPUS:
             pass
         else:
+            print(action)
             raise TypeError("Error: " + self.add_action.__name__)
         
     def add_new_percepts_to_KB(self, cell):
@@ -216,23 +258,13 @@ class AgentBrain:
         self.KB.add_clause([cell.get_literal(cells.Object.WUMPUS, sign)])
         sign_wumpus = sign
 
-        if sign_pit == sign_wumpus == '+':
+        if sign_pit == sign_wumpus and sign_wumpus == '+':
             raise TypeError('Logic Error: Pit and Wumpus can\'t be at the same cell.')
 
         sign = '-'
-        if cell.exist_poison():
+        if cell.exist_whiff():
             sign = '+'
-        self.KB.add_clause([cell.get_literal(cells.Object.POISON_GAS, sign)])
-
-        sign = '-'
-        if cell.exist_glow():
-            sign = '+'
-        self.KB.add_clause([cell.get_literal(cells.Object.GLOW, sign)])
-
-        sign = '-'
-        if cell.exist_health_pot():
-            sign = '+'
-        self.KB.add_clause([cell.get_literal(cells.Object.HEALTH_POT, sign)])
+        self.KB.add_clause([cell.get_literal(cells.Object.WHIFF, sign)])
 
         sign = '-'
         if cell.exist_breeze():
@@ -297,26 +329,8 @@ class AgentBrain:
             for adj_cell in adj_cell_list:
                 clause = [adj_cell.get_literal(cells.Object.POISON_GAS, '-')]
                 self.KB.add_clause(clause)
-        
-        if cell.exist_glow():
-            # S => Wa v Wb v Wc v Wd
-            clause = [cell.get_literal(cells.Object.GLOW, '-')]
-            for adj_cell in adj_cell_list:
-                clause.append(adj_cell.get_literal(cells.Object.HEALTH_POT, '+'))
-            self.KB.add_clause(clause)
 
-            # Wa v Wb v Wc v Wd => S
-            for adj_cell in adj_cell_list:
-                clause = [cell.get_literal(cells.Object.GLOW, '+'),
-                          adj_cell.get_literal(cells.Object.HEALTH_POT, '-')]
-                self.KB.add_clause(clause)
-
-        else:
-            for adj_cell in adj_cell_list:
-                clause = [adj_cell.get_literal(cells.Object.HEALTH_POT, '-')]
-                self.KB.add_clause(clause)
-
-        print(self.KB.KB)
+        # print(self.KB.KB)
         self.append_event_to_output_file(str(self.KB.KB))
         
     def turn_to(self, next_cell):
@@ -392,7 +406,7 @@ class AgentBrain:
         if not self.agent_cell.is_OK(self.health):
             temp_adj_cell_list = []
             for valid_adj_cell in valid_adj_cell_list:
-                if valid_adj_cell.is_explored() and valid_adj_cell.exist_pit():
+                if valid_adj_cell.is_explored() and (valid_adj_cell.exist_pit() or valid_adj_cell.exist_poison()):
                     temp_adj_cell_list.append(valid_adj_cell)
             for adj_cell in temp_adj_cell_list:
                 valid_adj_cell_list.remove(adj_cell)
@@ -402,8 +416,6 @@ class AgentBrain:
             if self.agent_cell.exist_stench():
                 valid_adj_cell: cells.Cell
                 for valid_adj_cell in valid_adj_cell_list:
-                    print("Infer: ", end='')
-                    print(valid_adj_cell.map_pos)
                     self.append_event_to_output_file('Infer: ' + str(valid_adj_cell.map_pos))
                     self.turn_to(valid_adj_cell)
 
@@ -441,8 +453,8 @@ class AgentBrain:
                     adj_cell_list.remove(explored_cell)
 
                 for adj_cell in adj_cell_list:
-                    print("Try: ", end='')
-                    print(adj_cell.map_pos)
+                    # print("Try: ", end='')
+                    # print(adj_cell.map_pos)
                     self.append_event_to_output_file('Try: ' + str(adj_cell.map_pos))
                     self.turn_to(adj_cell)
 
@@ -459,55 +471,34 @@ class AgentBrain:
             if self.agent_cell.exist_breeze():
                 valid_adj_cell: cells.Cell
                 for valid_adj_cell in valid_adj_cell_list:
-                    print("Infer: ", end='')
-                    print(valid_adj_cell.map_pos)
                     self.append_event_to_output_file('Infer: ' + str(valid_adj_cell.map_pos))
                     self.turn_to(valid_adj_cell)
 
-                    # Infer Pit.
                     self.add_action(Action.INFER_PIT)
                     not_alpha = [[valid_adj_cell.get_literal(cells.Object.PIT, '-')]]
                     have_pit = self.KB.infer(not_alpha)
 
-                    # If we can infer Pit.
                     if have_pit:
-                        # Detect Pit.
                         self.add_action(Action.DETECT_PIT)
-
-                        # Mark these cells as explored.
                         valid_adj_cell.explore()
-
-                        # Add new percepts of these cells to the KB.
                         self.add_new_percepts_to_KB(valid_adj_cell)
-
-                        # Update parent for this cell.
                         valid_adj_cell.update_parent(valid_adj_cell)
-
-                        # Discard these cells from the valid_adj_cell_list.
                         temp_adj_cell_list.append(valid_adj_cell)
 
-                    # If we can not infer Pit.
                     else:
-                        # Infer not Pit.
                         self.add_action(Action.INFER_NOT_PIT)
                         not_alpha = [[valid_adj_cell.get_literal(cells.Object.PIT, '+')]]
                         have_no_pit = self.KB.infer(not_alpha)
 
-                        # If we can infer not Pit.
                         if have_no_pit:
-                            # Detect no Pit.
                             self.add_action(Action.DETECT_NO_PIT)
 
-                        # If we can not infer not Pit.
                         else:
-                            # Discard these cells from the valid_adj_cell_list.
                             temp_adj_cell_list.append(valid_adj_cell)
 
             if self.agent_cell.exist_whiff():
                 valid_adj_cell: cells.Cell
                 for valid_adj_cell in valid_adj_cell_list:
-                    print("Infer: ", end='')
-                    print(valid_adj_cell.map_pos)
                     self.append_event_to_output_file('Infer: ' + str(valid_adj_cell.map_pos))
                     self.turn_to(valid_adj_cell)
 
@@ -517,34 +508,18 @@ class AgentBrain:
 
                     if have_gas:
                         self.add_action(Action.DETECT_GAS)
-
-                        # Mark these cells as explored.
                         valid_adj_cell.explore()
-
-                        # Add new percepts of these cells to the KB.
                         self.add_new_percepts_to_KB(valid_adj_cell)
-
-                        # Update parent for this cell.
                         valid_adj_cell.update_parent(valid_adj_cell)
-
-                        # Discard these cells from the valid_adj_cell_list.
                         temp_adj_cell_list.append(valid_adj_cell)
 
-                    # If we can not infer Pit.
                     else:
-                        # Infer not Pit.
                         self.add_action(Action.INFER_NOT_GAS)
                         not_alpha = [[valid_adj_cell.get_literal(cells.Object.POISON_GAS, '+')]]
                         have_no_gas = self.KB.infer(not_alpha)
-
-                        # If we can infer not Pit.
                         if have_no_gas:
-                            # Detect no Pit.
                             self.add_action(Action.DETECT_NO_GAS)
-
-                        # If we can not infer not Pit.
                         else:
-                            # Discard these cells from the valid_adj_cell_list.
                             temp_adj_cell_list.append(valid_adj_cell)
 
         temp_adj_cell_list = list(set(temp_adj_cell_list))
@@ -555,16 +530,12 @@ class AgentBrain:
 
         for next_cell in self.agent_cell.child_list:
             self.move_to(next_cell)
-            print("Move to: ", end='')
-            print(self.agent_cell.map_pos)
             self.append_event_to_output_file('Move to: ' + str(self.agent_cell.map_pos))
 
             if not self.backtracking_search():
                 return False
 
             self.move_to(pre_agent_cell)
-            print("Backtrack: ", end='')
-            print(pre_agent_cell.map_pos)
             self.append_event_to_output_file('Backtrack: ' + str(pre_agent_cell.map_pos))
 
         return True

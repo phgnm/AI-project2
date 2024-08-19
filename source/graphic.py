@@ -35,7 +35,7 @@ class graphics:
     def __init__(self):
         pygame.init()
         pygame.font.init()
-        self.screen = pygame.display.set_mode((1000, 710))
+        self.screen = pygame.display.set_mode((1234, 710))
         self.caption = pygame.display.set_caption("Wumpus World")
         self.clock = pygame.time.Clock()
         self.map = None
@@ -55,7 +55,9 @@ class graphics:
         self.map_i = 1
         self.mouse = None
         self.background = pygame.image.load('../assets/images/you_win.png').convert()
-        self.background = pygame.transform.scale(self.background, (970, 710))
+        self.background = pygame.transform.scale(self.background, (1234, 710))
+        self.background_game = pygame.image.load('../assets/images/background_game.png').convert()
+        self.background_game = pygame.transform.scale(self.background_game, (710, 710))
         self.direction = 0
 
     def draw_button(self, surf, rect, button_colour, text_colour, text):
@@ -67,21 +69,22 @@ class graphics:
 
     def game_draw(self):
         self.screen.fill(WHITE)
+        self.screen.blit(self.background_game, (0, 0))
         self.map.draw(self.screen)
         score = self.agent.get_score()
         health = self.agent.get_health()
         potions = self.agent.get_num_of_potion()
         text = self.font.render(f'Your score: {score}', True, BLACK)
         textRect = text.get_rect()
-        textRect.center = (827, 25)
+        textRect.center = (925, 25)
         self.screen.blit(text, textRect)
         text = self.font.render(f'Your health: {health}', True, BLACK)
         textRect = text.get_rect()
-        textRect.center = (827, 75)
+        textRect.center = (925, 75)
         self.screen.blit(text, textRect)
         text = self.font.render(f'Number of potions: {potions}', True, BLACK)
         textRect = text.get_rect()
-        textRect.center = (827, 125)
+        textRect.center = (925, 125)
         self.screen.blit(text, textRect)
 
     def win_draw(self):
@@ -94,11 +97,11 @@ class graphics:
             text = self.victory.render('BETTER LUCK NEXT TIME', True, BLACK)
         
         textRect = text.get_rect()
-        textRect.center = (300, 50)
+        textRect.center = (617, 50)
         self.screen.blit(text, textRect)
         score = self.agent.get_score()
         text = self.victory.render('Your score: ' + str(score), True, BLACK)
-        textRect.center = (450, 100)
+        textRect.center = (617, 100)
         self.screen.blit(text, textRect)
 
     def win_event(self):
@@ -415,8 +418,8 @@ class graphics:
                 j += 1
             elif self.direction == 3:
                 i -= 1
-            print(i, j)
             self.map.pit_detect(i, j)
+            print(self.map.pit_discover)
             self.all_sprites.update()
             self.game_draw()
             self.all_sprites.draw(self.screen)

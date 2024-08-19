@@ -59,6 +59,8 @@ class Cell:
                 continue
             else:
                 raise TypeError('Error: Cell.init_map')
+            
+        print(self.percept)
 
 
     def exist_gold(self):

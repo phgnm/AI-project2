@@ -44,7 +44,7 @@ class Wumpus:
         self.image = pygame.image.load('../assets/images/wumpus_alive.png').convert()
         self.image = pygame.transform.scale(self.image, (100, 200))
         self.size = 10
-        self.pos = (835, 100)
+        self.pos = (925, 250)
         self.is_discovered = None
         self.noti = [[False for i in range(self.size)] for j in range(self.size)]
         self.wumpus_pos = [[False for i in range(self.size)] for j in range(self.size)]
@@ -57,7 +57,7 @@ class Wumpus:
         textRect = text.get_rect()
         textRect.center = self.pos
         screen.blit(text, textRect)
-        screen.blit(self.image, (775,200))
+        screen.blit(self.image, (925, 300))
         pygame.display.update()
     
     def wumpus_notification(self):
@@ -101,16 +101,16 @@ class Gold:
     def __init__(self):
         self.image = pygame.image.load('../assets/images/gold.png')
         self.image = pygame.transform.scale(self.image, (150, 300))
-        self.pos = (835, 100)
+        self.pos = (925, 250)
     
     def grab_gold(self, screen, font):
         text = font.render('You found gold!', True, (0, 0, 0))
         textRect = text.get_rect()
         textRect.center = self.pos
         screen.blit(text, textRect)
-        screen.blit(self.image, (750, 200))
+        screen.blit(self.image, (925, 300))
         text = font.render('Score + 5000', True, (0, 0, 0))
-        textRect.center = (900, 600)
+        textRect.center = (925, 600)
         screen.blit(text, textRect)
         pygame.display.update()
 
@@ -119,7 +119,7 @@ class Gas:
         self.image = pygame.image.load('../assets/images/gas.png').convert()
         self.image = pygame.transform.scale(self.image, (100, 200))
         self.size = 10
-        self.pos = (835, 100)
+        self.pos = (925, 250)
         self.is_discovered = None
         self.noti = [[False for i in range(self.size)] for j in range(self.size)]
         self.gas_pos = [[False for i in range(self.size)] for j in range(self.size)]
@@ -131,9 +131,9 @@ class Gas:
         textRect = text.get_rect()
         textRect.center = self.pos
         screen.blit(text, textRect)
-        screen.blit(self.image, (750, 200))
+        screen.blit(self.image, (925, 300))
         text = font.render('Health - 25', True, (0, 0, 0))
-        textRect.center = (900, 600)
+        textRect.center = (925, 600)
         screen.blit(text, textRect)
         pygame.display.update()
 
@@ -167,14 +167,14 @@ class Potion:
     def __init__(self):
         self.image = pygame.image.load('../assets/images/potion.png')
         self.image = pygame.transform.scale(self.image, (150, 300))
-        self.pos = (835, 100)
+        self.pos = (925, 250)
     
     def grab_potion(self, screen, font):
         text = font.render('You found potion!', True, (0, 0, 0))
         textRect = text.get_rect()
         textRect.center = self.pos
         screen.blit(text, textRect)
-        screen.blit(self.image, (750, 200))
+        screen.blit(self.image, (925, 300))
         pygame.display.update()
     
     def use_potion(self, screen, font):
