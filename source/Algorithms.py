@@ -134,11 +134,12 @@ class AgentBrain:
             self.score -= 10000
         elif action == Action.FALL_INTO_PIT:
             self.score -= 10000
+        elif action == Action.DIE_OF_GAS:
+            self.score -= 10000
         elif action == Action.SNIFF_GAS:
             self.health -= 1
             if self.health == 0:
                 action = Action.DIE_OF_GAS
-                self.score -= 10000
         elif action == Action.HEAL:
             if self.count_potion:
                 self.count_potion -= 1
@@ -376,6 +377,9 @@ class AgentBrain:
         if not self.agent_cell.is_explored():
             self.agent_cell.explore()
             self.add_new_percepts_to_KB(self.agent_cell)
+        
+        if self.health < 4 and self.count_potion > 0:
+            self.add_action(Action.HEAL)
 
         valid_adj_cell_list = self.agent_cell.get_adj_cell_list(self.cell_matrix)
 

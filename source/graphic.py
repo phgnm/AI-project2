@@ -391,7 +391,7 @@ class graphics:
             self.agent.use_potion()
             self.all_sprites.update()
             self.game_draw()
-            self.potion.use_potion()
+            self.potion.use_potion(self.screen, self.font)
             self.all_sprites.draw(self.screen)
             pygame.display.update()
         elif action == Algorithms.Action.KILL_ALL_WUMPUS_AND_GRAB_ALL_FOOD:
