@@ -57,7 +57,7 @@ class Wumpus:
         textRect = text.get_rect()
         textRect.center = self.pos
         screen.blit(text, textRect)
-        screen.blit(self.image, (800,200))
+        screen.blit(self.image, (775,200))
         pygame.display.update()
     
     def wumpus_notification(self):

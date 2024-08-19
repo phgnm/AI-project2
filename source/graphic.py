@@ -69,9 +69,14 @@ class graphics:
         self.screen.fill(WHITE)
         self.map.draw(self.screen)
         score = self.agent.get_score()
+        health = self.agent.get_health()
         text = self.font.render(f'Your score: {score}', True, BLACK)
         textRect = text.get_rect()
-        textRect.center = (820, 25)
+        textRect.center = (827, 25)
+        self.screen.blit(text, textRect)
+        text = self.font.render(f'Your health: {health}', True, BLACK)
+        textRect = text.get_rect()
+        textRect.center = (827, 75)
         self.screen.blit(text, textRect)
 
     def win_draw(self):
@@ -84,7 +89,7 @@ class graphics:
             text = self.victory.render('BETTER LUCK NEXT TIME', True, BLACK)
         
         textRect = text.get_rect()
-        textRect.center = (500, 50)
+        textRect.center = (300, 50)
         self.screen.blit(text, textRect)
         score = self.agent.get_score()
         text = self.victory.render('Your score: ' + str(score), True, BLACK)
@@ -296,7 +301,7 @@ class graphics:
             self.pit.update(self.screen, self.noti, temp)
             self.poison.update(self.screen, self.noti, temp)
             pygame.display.update()
-            pygame.time.delay(500)
+            pygame.time.delay(3000)
         elif action == Algorithms.Action.GRAB_POTION:
             self.agent.grab_potion()
             self.all_sprites.update()
@@ -308,7 +313,7 @@ class graphics:
             self.pit.update(self.screen, self.noti, temp)
             self.poison.update(self.screen, self.noti, temp)
             pygame.display.update()
-            pygame.time.delay(500)
+            pygame.time.delay(3000)
         elif action == Algorithms.Action.SHOOT:
             self.agent.shoot()
             self.all_sprites.update()
@@ -341,7 +346,7 @@ class graphics:
             self.pit.update(self.screen, self.noti, temp)
             self.poison.update(self.screen, self.noti, temp)
             pygame.display.update()
-            pygame.time.delay(500)
+            pygame.time.delay(3000)
         elif action == Algorithms.Action.KILL_NO_WUMPUS:
             pass
         elif action == Algorithms.Action.SNIFF_GAS:
@@ -355,7 +360,7 @@ class graphics:
             self.pit.update(self.screen, self.noti, temp)
             self.poison.update(self.screen, self.noti, temp)
             pygame.display.update()
-            pygame.time.delay(500)
+            pygame.time.delay(3000)
         elif action == Algorithms.Action.BE_EATEN_BY_WUMPUS:
             self.agent.wumpus_or_pit_or_poison()
             self.all_sprites.update()
