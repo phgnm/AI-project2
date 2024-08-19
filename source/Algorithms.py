@@ -67,7 +67,7 @@ class AgentBrain:
         with open(map_filename, 'r') as file:
             self.map_size = int(file.readline())
             raw_map = [line.split('.') for line in file.read().splitlines()]
-
+        print(raw_map)
         self.cell_matrix = [[None for _ in range(self.map_size)] for _ in range(self.map_size)]
         for ir in range(self.map_size):
             for ic in range(self.map_size):
@@ -371,7 +371,7 @@ class AgentBrain:
 
         if self.agent_cell.exist_health_pot():
             self.add_action(Action.GRAB_POTION)
-            self.agent_cell.grab_health_pot()
+            self.agent_cell.grab_health_pot(self.cell_matrix, self.KB)
 
         if not self.agent_cell.is_explored():
             self.agent_cell.explore()

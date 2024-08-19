@@ -25,6 +25,7 @@ class Cell:
         # [-G, -P, -W, -B, -S, -P_G, -H_P, -W_H, -G_L]
         # [1 ,  2,  3,  4,  5,  6  ,  7,    8  ,  9  ]
         self.percept = [False, False, False, False, False, False, False, False, False]
+        print(objects_str)
         self.init_map(objects_str)
 
         self.parent = None
@@ -32,7 +33,8 @@ class Cell:
 
 
     def init_map(self, map_str):
-        for obj_char in map_str:
+        object_list = map_str.split(',')
+        for obj_char in object_list:
             if obj_char == Object.GOLD.value:
                 self.percept[0] = True
             elif obj_char == Object.PIT.value:

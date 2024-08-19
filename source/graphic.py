@@ -35,7 +35,7 @@ class graphics:
     def __init__(self):
         pygame.init()
         pygame.font.init()
-        self.screen = pygame.display.set_mode((970, 710))
+        self.screen = pygame.display.set_mode((1000, 710))
         self.caption = pygame.display.set_caption("Wumpus World")
         self.clock = pygame.time.Clock()
         self.map = None
@@ -70,6 +70,7 @@ class graphics:
         self.map.draw(self.screen)
         score = self.agent.get_score()
         health = self.agent.get_health()
+        potions = self.agent.get_num_of_potion()
         text = self.font.render(f'Your score: {score}', True, BLACK)
         textRect = text.get_rect()
         textRect.center = (827, 25)
@@ -77,6 +78,10 @@ class graphics:
         text = self.font.render(f'Your health: {health}', True, BLACK)
         textRect = text.get_rect()
         textRect.center = (827, 75)
+        self.screen.blit(text, textRect)
+        text = self.font.render(f'Number of potions: {potions}', True, BLACK)
+        textRect = text.get_rect()
+        textRect.center = (827, 125)
         self.screen.blit(text, textRect)
 
     def win_draw(self):
@@ -307,7 +312,7 @@ class graphics:
             self.all_sprites.update()
             self.game_draw()
             self.all_sprites.draw(self.screen)
-            self.gold.grab_gold(self.screen, self.font)
+            self.potion.grab_potion(self.screen, self.font)
             temp = self.map.discovered()
             self.wumpus.update(self.screen, self.noti, temp)
             self.pit.update(self.screen, self.noti, temp)
@@ -354,7 +359,7 @@ class graphics:
             self.all_sprites.update()
             self.game_draw()
             self.all_sprites.draw(self.screen)
-            self.poison.grab_poison()
+            self.poison.grab_poison(self.screen, self.font)
             temp = self.map.discovered()
             self.wumpus.update(self.screen, self.noti, temp)
             self.pit.update(self.screen, self.noti, temp)

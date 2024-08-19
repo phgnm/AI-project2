@@ -35,6 +35,9 @@ class agent(pygame.sprite.Sprite):
     def get_health(self):
         return self.health * 25
     
+    def get_num_of_potion(self):
+        return self.count_potion
+    
     def move(self, direct):
         if direct == 0:
             self.move_left()     
